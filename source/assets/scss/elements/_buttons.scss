@@ -1,0 +1,71 @@
+@use 'sass:color';
+
+// stylelint-disable scss/dollar-variable-empty-line-after
+.button {
+  @include focus-visible;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  height: 48px;
+  padding-right: 32px;
+  padding-left: 32px;
+  transition:
+    background-color 0.225s ease,
+    box-shadow 0.225s ease,
+    border-color 0.225s ease,
+    color 0.225s ease;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-family: $base-font-family;
+  font-size: 18px;
+  font-weight: 500;
+  &--black {
+    border-width: 2px;
+    border-color: #1c1f29;
+    background-color: #1c1f29;
+    color: white;
+    &:hover {
+      border-color: #303647;
+      background-color: #303647;
+    }
+    &:active {
+      border-color: #2f2c6d;
+      background-color: #2f2c6d;
+    }
+    &:focus-visible {
+      border-color: #b8b6e2;
+      background-color: #3f3a92;
+      box-shadow: none;
+    }
+    &:disabled {
+      border-color: #ededf8;
+      background-color: #ededf8;
+      color: #9695a5;
+    }
+  }
+  &--secondary {
+    padding: 0 24px;
+    border: 2px solid #1c1f29;
+    background-color: transparent;
+    &:hover {
+      border-color: #3f3a92;
+      color: #3f3a92;
+    }
+    &:active {
+      border-color: #2f2c6d;
+      color: #2f2c6d;
+    }
+    &:focus-visible {
+      border-color: #b8b6e2;
+      box-shadow: none;
+      color: #111028;
+    }
+    &:disabled {
+      border-color: #96969c;
+      color: #96969c;
+    }
+  }
+}
+
+// stylelint-enable scss/dollar-variable-empty-line-after

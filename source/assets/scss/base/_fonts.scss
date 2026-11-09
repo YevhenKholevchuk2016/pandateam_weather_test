@@ -1,0 +1,23 @@
+/* Poppins - latin */
+
+@include font-face(Poppins, 400, regular, true);
+
+/* Poppins - latin-ext */
+
+@include font-face(Poppins, 400, ext-regular, false);
+
+/* Poppins-500 - latin */
+
+@include font-face(Poppins, 500, 500, true);
+
+/* Poppins-500 - latin-ext */
+
+@include font-face(Poppins, 500, ext-500, false);
+
+/* Poppins-500 - latin */
+
+@include font-face(Poppins, 600, 600, true);
+
+/* Poppins-600 - latin-ext */
+
+@include font-face(Poppins, 600, ext-600, false);

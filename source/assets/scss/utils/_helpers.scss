@@ -1,0 +1,42 @@
+.d-none {
+  display: none !important;
+}
+.disabled-scroll {
+  .main-wrapper__inner-container {
+    overflow-y: hidden;
+  }
+}
+
+@each $size in (50) {
+  @each $val in ((t, top), (b, bottom), (l, left), (r, right)) {
+    .m#{nth($val, 1)}-#{$size} {
+      margin-#{nth($val, 2)}: #{$size}px !important;
+    }
+
+    .p#{nth($val, 1)}-#{$size} {
+      padding-#{nth($val, 2)}: #{$size}px !important;
+    }
+  }
+}
+@each $gap in (2, 4, 8) {
+  .column-gap-#{$gap} {
+    column-gap: #{$gap}px !important;
+  }
+}
+@each $gap in (2, 4, 8) {
+  .row-gap-#{$gap} {
+    row-gap: #{$gap}px !important;
+  }
+}
+/* stylelint-disable */
+@each $ellipsis-line in (2, 3) {
+  .txt-ellipsis-#{$ellipsis-line} {
+    display: block;
+    display: -webkit-box;
+    -webkit-line-clamp: #{$ellipsis-line};
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+/* stylelint-enable */

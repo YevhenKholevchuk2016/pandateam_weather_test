@@ -1,0 +1,82 @@
+// stylelint-disable unit-no-unknown
+
+@mixin font-face($font-family, $weight, $font-name, $font-type) {
+  @font-face {
+    font-family: $font-family;
+    font-style: normal;
+    font-weight: $weight;
+    font-display: swap;
+    src: url('#{$path-to-static-fonts}#{to-lower-case($font-family)}/#{to-lower-case($font-family)}-latin-#{$font-name}.woff2')
+      format('woff2');
+    @if $font-type {
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+        U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; // latin
+    } @else {
+      unicode-range: U+0100-02AF, U+0304, U+0308, U+0329, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0,
+        U+2113, U+2C60-2C7F, U+A720-A7FF; // latin-ext
+    }
+  }
+}
+
+// stylelint-enable unit-no-unknown
+
+// stylelint-disable media-feature-range-notation
+
+@mixin for-tablet-up {
+  @media (min-width: 640px) {
+    @content;
+  }
+}
+@mixin for-laptop-up {
+  @media (min-width: 1024px) {
+    @content;
+  }
+}
+@mixin for-desktop-up {
+  @media (min-width: 1170px) {
+    @content;
+  }
+}
+@mixin for-wide-desktop-up {
+  @media (min-width: 1400px) {
+    @content;
+  }
+}
+@mixin for-desktop-down {
+  @media (max-width: 1169px) {
+    @content;
+  }
+}
+@mixin hover-supported {
+  @media (min-width: 1170px) {
+    &:hover {
+      @content;
+    }
+  }
+}
+// stylelint-enable media-feature-range-notation
+
+@mixin focus-visible {
+  &:focus-visible {
+    @content;
+    border-radius: 4px;
+
+    outline: 0;
+    box-shadow:
+      0 0 0 2px black,
+      0 0 0 3px white;
+  }
+}
+@mixin trim($numLines: null) {
+  @if $numLines {
+    display: box;
+    -webkit-line-clamp: $numLines;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  } @else {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

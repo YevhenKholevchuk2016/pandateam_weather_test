@@ -1,0 +1,5 @@
+node_modules/
+package-lock.json
+assets/html/base/layout/footer.html
+assets/html/base/base.html
+/.vscode

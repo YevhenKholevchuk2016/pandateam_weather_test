@@ -1,0 +1,82 @@
+html {
+  height: 100%;
+}
+body {
+  display: grid;
+  grid-template-rows: 1fr;
+  min-height: 100%;
+  background-color: color(gray, 200);
+  color: color(gray, 400);
+  font-family: $base-font-family;
+  font-size: $base-font-size;
+}
+.main-wrapper {
+  display: grid;
+  position: relative;
+  grid-template-rows: 1fr;
+  min-height: inherit;
+  overflow: hidden;
+
+  /* @include for-wide-desktop-up {
+    grid-template-columns: 306px 1fr;
+  }
+  &__inner-container {
+    height: 100dvh;
+    overflow-y: auto;
+    @supports (scrollbar-gutter: stable both-edges) {
+      scrollbar-gutter: stable both-edges;
+    }
+  }
+  &__hamburger {
+    position: absolute;
+    z-index: $hamburger;
+    top: 8px;
+    right: 8px;
+    opacity: 1;
+    pointer-events: initial;
+    will-change: opacity;
+    @include for-wide-desktop-up {
+      opacity: 0;
+      pointer-events: none;
+    }
+  } */
+}
+.container {
+  max-width: 1000px;
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 16px;
+  padding-left: 16px;
+  @include for-tablet-up {
+    max-width: 1016px;
+    padding-right: 24px;
+    padding-left: 24px;
+  }
+  @include for-laptop-up {
+    max-width: 1032px;
+    padding-right: 32px;
+    padding-left: 32px;
+  }
+  @include for-desktop-up {
+    max-width: 1048px;
+    padding-right: 40px;
+    padding-left: 40px;
+  }
+  @include for-wide-desktop-up {
+    max-width: 1108px;
+    padding-right: 70px;
+    padding-left: 70px;
+  }
+}
+.visually-hidden:not(:focus, :active) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  border: 0;
+  white-space: nowrap;
+  clip-path: inset(100%);
+}
