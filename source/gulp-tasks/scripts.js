@@ -6,49 +6,56 @@ import hash from 'gulp-hash-filename'
 import babelify from 'babelify'
 import source from 'vinyl-source-stream'
 import buffer from 'vinyl-buffer'
-import es from 'event-stream'
 import glob from 'glob'
+import pump from 'pump'
 
 const { dest } = pkg
 
-export function script(done, inputJs, outputJs) {
+// build one pipeline per entry file and call done once every pipeline has finished
+const runPerFile = (inputJs, buildPipeline, done) => {
   glob(inputJs, (err, files) => {
     if (err) {
-      done(err)
+      return done(err)
     }
-    const tasks = files.map(entry =>
-      browserify({ entries: [entry] })
-        .transform(babelify)
-        .bundle()
-        .pipe(source(entry.slice(entry.lastIndexOf('/') + 1)))
-        .pipe(buffer())
-        .pipe(sourcemaps.init())
-        .pipe(sourcemaps.write('./'))
-        .pipe(dest(outputJs)),
-    )
-    es.merge(tasks).on('end', done)
+    return Promise.all(
+      files.map(
+        entry =>
+          new Promise((resolve, reject) => {
+            pump(buildPipeline(entry), err2 => (err2 ? reject(err2) : resolve()))
+          }),
+      ),
+    ).then(() => done(), done)
   })
 }
 
+export function script(done, inputJs, outputJs) {
+  runPerFile(
+    inputJs,
+    entry => [
+      browserify({ entries: [entry] }).transform(babelify).bundle(),
+      source(entry.slice(entry.lastIndexOf('/') + 1)),
+      buffer(),
+      sourcemaps.init(),
+      sourcemaps.write('./'),
+      dest(outputJs),
+    ],
+    done,
+  )
+}
+
 export function scriptBuild(done, inputJs, outputJs) {
-  glob(inputJs, (err, files) => {
-    if (err) {
-      done(err)
-    }
-    const tasks = files.map(entry =>
-      browserify({ entries: [entry] })
-        .transform(babelify)
-        .bundle()
-        .pipe(source(entry.slice(entry.lastIndexOf('/') + 1)))
-        .pipe(buffer())
-        .pipe(
-          hash({
-            format: '{name}_{hash}{ext}',
-          }),
-        )
-        .pipe(uglify())
-        .pipe(dest(outputJs)),
-    )
-    es.merge(tasks).on('end', done)
-  })
+  runPerFile(
+    inputJs,
+    entry => [
+      browserify({ entries: [entry] }).transform(babelify).bundle(),
+      source(entry.slice(entry.lastIndexOf('/') + 1)),
+      buffer(),
+      hash({
+        format: '{name}_{hash}{ext}',
+      }),
+      uglify(),
+      dest(outputJs),
+    ],
+    done,
+  )
 }

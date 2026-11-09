@@ -2,7 +2,6 @@ import pkg from 'gulp'
 import pump from 'pump'
 import svgSprite from 'gulp-svg-sprite'
 import glob from 'glob'
-import es from 'event-stream'
 import fs from 'fs'
 
 const { src, dest } = pkg
@@ -15,45 +14,50 @@ export default function spriteBuilder(inputSvg, outputSvg, svgSymbols, cb) {
 
   glob(inputSvg, err => {
     if (err) {
-      cb(err)
+      return cb(err)
     }
-    const tasks = objectUrl.map(elem =>
-      pump(
-        [
-          src(elem.input),
-          svgSprite({
-            shape: {
-              id: {
-                generator: name => `icon-${name.slice(4, -4)}`,
-              },
-            },
-            mode: {
-              symbol: {
-                dest: '.',
-                sprite: svgSymbols,
-                example: true,
-              },
-            },
-            transform: [
-              {
-                svgo: {
-                  plugins: [
-                    {
-                      removeViewBox: false,
+    // one pipeline per sprite folder; call cb once all of them have finished
+    return Promise.all(
+      objectUrl.map(
+        elem =>
+          new Promise((resolve, reject) => {
+            pump(
+              [
+                src(elem.input),
+                svgSprite({
+                  shape: {
+                    id: {
+                      generator: name => `icon-${name.slice(4, -4)}`,
                     },
+                  },
+                  mode: {
+                    symbol: {
+                      dest: '.',
+                      sprite: svgSymbols,
+                      example: true,
+                    },
+                  },
+                  transform: [
                     {
-                      removeTitle: true,
+                      svgo: {
+                        plugins: [
+                          {
+                            removeViewBox: false,
+                          },
+                          {
+                            removeTitle: true,
+                          },
+                        ],
+                      },
                     },
                   ],
-                },
-              },
-            ],
+                }),
+                dest(elem.output),
+              ],
+              err2 => (err2 ? reject(err2) : resolve()),
+            )
           }),
-          dest(elem.output),
-        ],
-        cb,
       ),
-    )
-    es.merge(tasks).on('end', cb)
+    ).then(() => cb(), cb)
   })
 }
