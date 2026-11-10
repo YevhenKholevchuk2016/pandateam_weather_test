@@ -1,4 +1,5 @@
 import pkg from 'gulp'
+import orderedReadStreams from 'ordered-read-streams'
 import sourcemaps from 'gulp-sourcemaps'
 import uglify from 'gulp-uglify'
 import browserify from 'browserify'
@@ -11,51 +12,39 @@ import pump from 'pump'
 
 const { dest } = pkg
 
-// build one pipeline per entry file and call done once every pipeline has finished
-const runPerFile = (inputJs, buildPipeline, done) => {
+// bundle every entry file, merge the streams in order, and write them all through one dest
+export function script(done, inputJs, outputJs) {
   glob(inputJs, (err, files) => {
     if (err) {
       return done(err)
     }
-    return Promise.all(
-      files.map(
-        entry =>
-          new Promise((resolve, reject) => {
-            pump(buildPipeline(entry), err2 => (err2 ? reject(err2) : resolve()))
-          }),
-      ),
-    ).then(() => done(), done)
+    const streams = files.map(entry =>
+      browserify({ entries: [entry] })
+        .transform(babelify)
+        .bundle()
+        .pipe(source(entry.slice(entry.lastIndexOf('/') + 1)))
+        .pipe(buffer())
+        .pipe(sourcemaps.init())
+        .pipe(sourcemaps.write('./')),
+    )
+    return pump([orderedReadStreams(streams), dest(outputJs)], done)
   })
 }
 
-export function script(done, inputJs, outputJs) {
-  runPerFile(
-    inputJs,
-    entry => [
-      browserify({ entries: [entry] }).transform(babelify).bundle(),
-      source(entry.slice(entry.lastIndexOf('/') + 1)),
-      buffer(),
-      sourcemaps.init(),
-      sourcemaps.write('./'),
-      dest(outputJs),
-    ],
-    done,
-  )
-}
-
 export function scriptBuild(done, inputJs, outputJs) {
-  runPerFile(
-    inputJs,
-    entry => [
-      browserify({ entries: [entry] }).transform(babelify).bundle(),
-      source(entry.slice(entry.lastIndexOf('/') + 1)),
-      buffer(),
-      hash({
-        format: '{name}_{hash}{ext}',
-      }),
-      uglify(),
-      dest(outputJs),
-    ],
-    done,
-  )
+  glob(inputJs, (err, files) => {
+    if (err) {
+      return done(err)
+    }
+    const streams = files.map(entry =>
+      browserify({ entries: [entry] })
+        .transform(babelify)
+        .bundle()
+        .pipe(source(entry.slice(entry.lastIndexOf('/') + 1)))
+        .pipe(buffer())
+        .pipe(hash({ format: '{name}_{hash}{ext}' }))
+        .pipe(uglify()),
+    )
+    return pump([orderedReadStreams(streams), dest(outputJs)], done)
+  })
 }

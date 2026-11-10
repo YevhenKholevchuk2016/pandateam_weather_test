@@ -87,6 +87,7 @@
     "gulp-uglify": "3.0.2",
     "lint-staged": "15.2.9",
     "micromodal": "0.4.10",
+    "ordered-read-streams": "2.0.0",
     "path": "0.12.7",
     "postcss": "8.4.41",
     "prettier": "3.2.5",
