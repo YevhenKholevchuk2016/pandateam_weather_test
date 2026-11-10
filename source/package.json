@@ -30,7 +30,7 @@
     ]
   },
   "engines": {
-    "node": "20.x"
+    "node": "24.x"
   },
   "babel": {
     "presets": [
@@ -99,8 +99,6 @@
     "vinyl-source-stream": "2.0.0"
   },
   "dependencies": {
-    "@realfavicongenerator/gulp-real-favicon": "0.4.1",
-    "apexcharts": "^3.52.0",
     "gulp-favicons": "^4.0.1",
     "husky": "^9.1.5"
   }
